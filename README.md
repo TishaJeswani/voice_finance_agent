@@ -238,7 +238,7 @@ Copy the HTTPS URL and paste it into:
 * Multi-user financial tracking
 * Budget alerts & notifications
 
-* Tisha thank you for your support 
+
 
 ---
 
