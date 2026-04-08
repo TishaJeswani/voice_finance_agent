@@ -5,3 +5,9 @@ pydantic
 twilio
 python-multipart
 requests
+pymongo
+rapidfuzz
+openai-whisper
+edge-tts
+aiofiles
+certifi

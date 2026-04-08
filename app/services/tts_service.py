@@ -1,23 +1,25 @@
 import edge_tts
-import asyncio
-import os
 import time
-
+import os
 
 class TTSService:
 
     @staticmethod
-    async def text_to_speech(text: str) -> str:
-        output_path = f"app/media/tts_{time.time()}.mp3"
+    async def generate_audio(text: str) -> str:
+        try:
+            filename = f"tts_{int(time.time())}.mp3"
+            output_path = f"app/media/{filename}"
 
-        communicate = edge_tts.Communicate(
-            text=text,
-            voice="en-US-AriaNeural"
-        )
 
-        await communicate.save(output_path)
+            
+            communicate = edge_tts.Communicate(text, "en-US-GuyNeural")
+            await communicate.save(output_path)
+            
+            return filename
+        except Exception as e:
+            print(f"❌ TTS Error: {e}")
+            return None
 
-        return output_path
 
     async def generate_audio_response(text: str):
         return None
