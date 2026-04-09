@@ -93,8 +93,8 @@ Format:
         for model in LLMService.MODELS:
             payload = {
                 "model": model,
-                "temperature": 0.5,
-                "max_tokens": 250,
+                "temperature": 0.6,
+                "max_tokens": 800,
                 "messages": messages
             }
 

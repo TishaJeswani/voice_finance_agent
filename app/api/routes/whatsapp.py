@@ -119,10 +119,13 @@ async def whatsapp_webhook(request: Request):
         print("🤖 Calling LLM for response...", flush=True)
         logger.info("🤖 Generating AI response...")
         system_prompt = f"""
-You are a smart personal finance assistant.
+You are an expert, friendly, and highly knowledgeable personal finance assistant.
 Rules:
-- Keep response under 2-3 lines.
-- Be conversational and helpful.
+- Provide detailed, insightful, and knowledgeable answers in user-friendly terms.
+- Use a supportive and conversational tone, like a trusted human financial advisor.
+- Always try to provide proper, actionable suggestions, tips, or alternatives relevant to the user's query.
+- Keep your response under 1000 characters so it fits neatly into a single WhatsApp message.
+- Make your formatting easy to read (use emojis or short bullet points where appropriate).
 - Reference the current data if provided in context.
 
 Context:
@@ -168,26 +171,50 @@ from typing import Optional
 
 async def send_twilio_response(request: Request, text: str, message_type: str, audio_filename: Optional[str] = None):
     response = MessagingResponse()
-    msg = response.message()
     
     # Use the current request's base URL to ensure ngrok matches perfectly
     base_url = str(request.base_url).rstrip("/")
     
+    def chunk_message(msg_text, max_len=1500):
+        chunks = []
+        while len(msg_text) > max_len:
+            split_at = msg_text.rfind('\n', 0, max_len)
+            if split_at == -1:
+                split_at = msg_text.rfind(' ', 0, max_len)
+            if split_at == -1:
+                split_at = max_len
+            chunks.append(msg_text[:split_at].strip())
+            msg_text = msg_text[split_at:].strip()
+        if msg_text:
+            chunks.append(msg_text)
+        return chunks
+
     if audio_filename:
         media_url = f"{base_url}/media/{audio_filename}"
         print(f"🎧 Media URL for Twilio: {media_url}", flush=True)
         
-        # Add a clickable link to the text as a foolproof fallback
-        final_text = f"{text}\n\nListen: {media_url}"
-        msg.body(final_text)
-        msg.media(media_url)
-    else:
-        msg.body(text)
+        # Audio message first (with NO body text to prevent Twilio splitting bugs on WhatsApp)
+        audio_msg = response.message()
+        audio_msg.media(media_url)
         
+        # Then the normal text reply
+        final_text = f"{text}\n\nListen: {media_url}"
+        chunks = chunk_message(final_text)
+        for chunk in chunks:
+            msg = response.message()
+            msg.body(chunk)
+    else:
+        chunks = chunk_message(text)
+        for chunk in chunks:
+            msg = response.message()
+            msg.body(chunk)
+            
     return Response(content=str(response), media_type="application/xml")
 
 
 def generate_twiml_response(text: str):
     response = MessagingResponse()
-    response.message(text)
+    msg = response.message()
+    # Failsafe chunking for simple twiml generator, usually for error messages
+    msg.body(text[:1500])
     return Response(content=str(response), media_type="application/xml")

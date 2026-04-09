@@ -5,7 +5,6 @@ from fastapi.responses import FileResponse
 import time
 import os
 
-
 app = FastAPI(
     title="Voice Finance Assistant",
     version="1.0.0"

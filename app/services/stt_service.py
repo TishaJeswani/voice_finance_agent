@@ -5,18 +5,15 @@ os.environ["PATH"] += ";C:\\ffmpeg\\bin"
 
 import whisper
 
-# ✅ Lazy load model to prevent startup hangs
-_model = None
+# ✅ Eager load model to prevent startup hangs
+print("🎤 Pre-loading Whisper model on startup to avoid Twilio timeouts...")
+_model = whisper.load_model("base")
+print("✅ Whisper model loaded.")
 
 class STTService:
 
     @staticmethod
     def get_model():
-        global _model
-        if _model is None:
-            print("🎤 Loading Whisper model (this may take a moment)...")
-            _model = whisper.load_model("base")
-            print("✅ Whisper model loaded.")
         return _model
 
     @staticmethod
