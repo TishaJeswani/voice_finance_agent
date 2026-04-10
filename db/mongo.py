@@ -4,4 +4,8 @@ from app.services.mongo_service import MongoService
 db = MongoService.get_db()
 users_collection = MongoService.get_collection("users")
 transactions_collection = MongoService.get_collection("transactions")
-chat_collection = MongoService.get_collection("chat_history")
+chat_collection = MongoService.get_collection("chat_history")
+
+# NEW FOR PHASE 3
+budgets_collection = MongoService.get_collection("budgets")
+memory_collection = MongoService.get_collection("conversation_memory")

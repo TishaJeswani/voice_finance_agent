@@ -38,11 +38,17 @@ Available Intents:
 1. get_expense: User wants to know how much they spent.
 2. add_expense: User wants to record a new transaction.
 3. summary: User wants an overview of total spending.
+4. set_budget: User wants to set a budget limit for a category.
+5. get_budget_status: User wants to check their budget usage or overspending.
+6. delete_expense: User wants to delete or remove a transaction.
+7. update_expense: User wants to modify an existing transaction.
+8. get_insights: User wants general financial insights or advice about their spending.
+9. get_recent_transactions: User wants to see their latest transactions.
 
 Return ONLY valid JSON.
 Format:
 {
-  "intent": "get_expense | add_expense | summary | unknown",
+  "intent": "get_expense | add_expense | summary | set_budget | get_budget_status | delete_expense | update_expense | get_insights | get_recent_transactions | unknown",
   "category": "string or null",
   "amount": number or null,
   "description": "string or null"
